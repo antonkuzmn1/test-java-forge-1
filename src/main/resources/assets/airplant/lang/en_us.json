@@ -1,4 +1,5 @@
 {
   "itemGroup.airplant": "Air Plant",
-  "item.airplant.air_plant_seeds": "Small Plant Seeds"
+  "item.airplant.air_plant_seeds": "Small Plant Seeds",
+  "block.airplant.air_plant_pot": "Small Pot"
 }

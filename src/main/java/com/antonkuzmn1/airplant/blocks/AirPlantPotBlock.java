@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -28,10 +30,13 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public class AirPlantPotBlock extends Block implements EntityBlock {
+    public static final IntegerProperty STAGE = IntegerProperty.create("stage", 0, 3);
+
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public AirPlantPotBlock() {
         super(BlockBehaviour.Properties.of());
+        this.registerDefaultState(this.stateDefinition.any().setValue(STAGE, 0));
     }
 
     @Override
@@ -51,6 +56,9 @@ public class AirPlantPotBlock extends Block implements EntityBlock {
             @NotNull BlockPos pos,
             @NotNull CollisionContext context
     ) {
+        if (state.getValue(STAGE) == 0) {
+            return Shapes.box(0.28, 0, 0.28, 0.72, 0.375, 0.72);
+        }
         return Shapes.box(0.28, 0, 0.28, 0.72, 1, 0.72);
     }
 
@@ -96,10 +104,26 @@ public class AirPlantPotBlock extends Block implements EntityBlock {
         }
 
         if (isAirPlantSeeds) {
+            BlockState newState = state.setValue(STAGE, 3);
+            level.setBlock(pos, newState, 3);
+
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof AirPlantPotBlockEntity pot) {
+                pot.syncFromBlockState();
+                pot.setChanged();
+            }
+
+            level.sendBlockUpdated(pos, state, newState, 3);
+
             LOGGER.info("Seeds used on Air Plant Pot at {}", pos);
             player.sendSystemMessage(Component.literal("Seeds used on Air Plant Pot at " + pos));
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(STAGE);
     }
 }

@@ -12,28 +12,37 @@ public class AirPlantPotBlockModel extends GeoModel<AirPlantPotBlockEntity> {
 
     @Override
     public ResourceLocation getModelResource(AirPlantPotBlockEntity animatable) {
-        return switch (getStage(animatable)) {
+        int stage = getStage(animatable);
+        return switch (stage) {
             case 0 -> ResourceLocation.tryParse("airplant:geo/small_pot_plant_0.geo.json");
+            case 1 -> ResourceLocation.tryParse("airplant:geo/small_pot_plant_1.geo.json");
+            case 2 -> ResourceLocation.tryParse("airplant:geo/small_pot_plant_2.geo.json");
             case 3 -> ResourceLocation.tryParse("airplant:geo/small_pot_plant_3.geo.json");
-            default -> throw new IllegalStateException("Unexpected value: " + animatable.plantState);
+            default -> throw new IllegalStateException("Unexpected value: " + stage);
         };
     }
 
     @Override
     public ResourceLocation getTextureResource(AirPlantPotBlockEntity animatable) {
-        return switch (getStage(animatable)) {
+        int stage = getStage(animatable);
+        return switch (stage) {
             case 0 -> ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_0.png");
+            case 1 -> ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_1.png");
+            case 2 -> ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_2.png");
             case 3 -> ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_3.png");
-            default -> throw new IllegalStateException("Unexpected value: " + animatable.plantState);
+            default -> throw new IllegalStateException("Unexpected value: " + stage);
         };
     }
 
     @Override
     public ResourceLocation getAnimationResource(AirPlantPotBlockEntity animatable) {
-        return switch (getStage(animatable)) {
+        int stage = getStage(animatable);
+        return switch (stage) {
             case 0 -> ResourceLocation.tryParse("airplant:animations/small_pot_plant_0.animation.json");
+            case 1 -> ResourceLocation.tryParse("airplant:animations/small_pot_plant_1.animation.json");
+            case 2 -> ResourceLocation.tryParse("airplant:animations/small_pot_plant_2.animation.json");
             case 3 -> ResourceLocation.tryParse("airplant:animations/small_pot_plant_3.animation.json");
-            default -> throw new IllegalStateException("Unexpected value: " + animatable.plantState);
+            default -> throw new IllegalStateException("Unexpected value: " + stage);
         };
     }
 

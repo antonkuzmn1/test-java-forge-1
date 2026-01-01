@@ -1,6 +1,8 @@
 {
   "variants": {
     "stage=0": { "model": "airplant:block/air_plant_pot_0" },
+    "stage=1": { "model": "airplant:block/air_plant_pot_1" },
+    "stage=2": { "model": "airplant:block/air_plant_pot_2" },
     "stage=3": { "model": "airplant:block/air_plant_pot_3" }
   }
 }

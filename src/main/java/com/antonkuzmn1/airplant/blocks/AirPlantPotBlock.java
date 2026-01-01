@@ -6,6 +6,8 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +19,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -25,6 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -97,14 +102,17 @@ public class AirPlantPotBlock extends Block implements EntityBlock {
             @NotNull BlockHitResult hit
     ) {
         ItemStack stack = player.getItemInHand(hand);
+        boolean isPlanted = state.getValue(STAGE) > 0;
         boolean isAirPlantSeeds = stack.is(ModItems.AIR_PLANT_SEEDS.get());
 
         if (level.isClientSide) {
-            return isAirPlantSeeds ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+            return (isAirPlantSeeds && !isPlanted)
+                    ? InteractionResult.SUCCESS
+                    : InteractionResult.CONSUME;
         }
 
-        if (isAirPlantSeeds) {
-            BlockState newState = state.setValue(STAGE, 3);
+        if (isAirPlantSeeds && !isPlanted) {
+            BlockState newState = state.setValue(STAGE, 1);
             level.setBlock(pos, newState, 3);
 
             BlockEntity be = level.getBlockEntity(pos);
@@ -120,6 +128,19 @@ public class AirPlantPotBlock extends Block implements EntityBlock {
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level level,
+            @NotNull BlockState state,
+            @NotNull BlockEntityType<T> type
+    ) {
+        return level.isClientSide ? null : (lvl, pos, st, be) -> {
+            if (be instanceof AirPlantPotBlockEntity pot) {
+                pot.tick(lvl, pos, st);
+            }
+        };
     }
 
     @Override

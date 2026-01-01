@@ -1,0 +1,6 @@
+{
+  "parent": "airplant:block/small_pot_plant_2",
+  "textures": {
+    "particle": "minecraft:block/flower_pot"
+  }
+}

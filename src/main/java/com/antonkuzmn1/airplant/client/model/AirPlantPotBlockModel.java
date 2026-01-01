@@ -13,6 +13,10 @@ public class AirPlantPotBlockModel extends GeoModel<AirPlantPotBlockEntity> {
     @Override
     public ResourceLocation getModelResource(AirPlantPotBlockEntity animatable) {
         int stage = getStage(animatable);
+        boolean recharging = isRecharging(animatable);
+        if  (stage == 3 && recharging) {
+            return ResourceLocation.tryParse("airplant:geo/small_pot_plant_recharging.geo.json");
+        }
         return switch (stage) {
             case 0 -> ResourceLocation.tryParse("airplant:geo/small_pot_plant_0.geo.json");
             case 1 -> ResourceLocation.tryParse("airplant:geo/small_pot_plant_1.geo.json");
@@ -25,6 +29,10 @@ public class AirPlantPotBlockModel extends GeoModel<AirPlantPotBlockEntity> {
     @Override
     public ResourceLocation getTextureResource(AirPlantPotBlockEntity animatable) {
         int stage = getStage(animatable);
+        boolean recharging = isRecharging(animatable);
+        if  (stage == 3 && recharging) {
+            return ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_recharging.png");
+        }
         return switch (stage) {
             case 0 -> ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_0.png");
             case 1 -> ResourceLocation.tryParse("airplant:textures/block/small_pot_plant_1.png");
@@ -37,6 +45,10 @@ public class AirPlantPotBlockModel extends GeoModel<AirPlantPotBlockEntity> {
     @Override
     public ResourceLocation getAnimationResource(AirPlantPotBlockEntity animatable) {
         int stage = getStage(animatable);
+        boolean recharging = isRecharging(animatable);
+        if  (stage == 3 && recharging) {
+            return ResourceLocation.tryParse("airplant:animations/small_pot_plant_recharging.animation.json");
+        }
         return switch (stage) {
             case 0 -> ResourceLocation.tryParse("airplant:animations/small_pot_plant_0.animation.json");
             case 1 -> ResourceLocation.tryParse("airplant:animations/small_pot_plant_1.animation.json");
@@ -54,5 +66,15 @@ public class AirPlantPotBlockModel extends GeoModel<AirPlantPotBlockEntity> {
             stage = state.getValue(AirPlantPotBlock.STAGE);
         }
         return stage;
+    }
+
+    private boolean isRecharging(AirPlantPotBlockEntity animatable) {
+        boolean recharging = false;
+        assert animatable.getLevel() != null;
+        var state = animatable.getLevel().getBlockState(animatable.getBlockPos());
+        if (state.getBlock() instanceof AirPlantPotBlock) {
+            recharging = state.getValue(AirPlantPotBlock.RECHARGING);
+        }
+        return recharging;
     }
 }

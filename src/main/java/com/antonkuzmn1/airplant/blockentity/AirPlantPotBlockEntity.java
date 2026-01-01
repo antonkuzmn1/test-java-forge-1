@@ -15,7 +15,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class AirPlantPotBlockEntity extends BlockEntity implements GeoBlockEntity {
     public int growCooldown = 200;
-    public int plantState = 0;
+    public int rechargeTicks = 0;
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -27,7 +27,7 @@ public class AirPlantPotBlockEntity extends BlockEntity implements GeoBlockEntit
     @Override
     public void onLoad() {
         super.onLoad();
-        syncFromBlockState();
+//        syncFromBlockState();
     }
 
     @Override
@@ -39,27 +39,57 @@ public class AirPlantPotBlockEntity extends BlockEntity implements GeoBlockEntit
         return cache;
     }
 
-    public void syncFromBlockState() {
-        if (level == null) return;
+//    public void syncFromBlockState() {
+//        if (level == null) return;
+//        BlockState state = level.getBlockState(worldPosition);
+//        if (!(state.getBlock() instanceof AirPlantPotBlock)) return;
+//
+//        plantState = state.getValue(AirPlantPotBlock.STAGE);
+//        harvestsLeft = state.getValue(AirPlantPotBlock.HARVESTS);
+//        recharging = state.getValue(AirPlantPotBlock.RECHARGING);
+//    }
 
-        BlockState state = level.getBlockState(worldPosition);
-
-        if (!(state.getBlock() instanceof AirPlantPotBlock)) {
-            return;
-        }
-
-        plantState = state.getValue(AirPlantPotBlock.STAGE);
-    }
+//    public void syncToBlockState() {
+//        if (level == null) return;
+//        BlockState state = level.getBlockState(worldPosition);
+//        if (!(state.getBlock() instanceof AirPlantPotBlock)) return;
+//
+//        BlockState newState = state
+//                .setValue(AirPlantPotBlock.HARVESTS, harvestsLeft)
+//                .setValue(AirPlantPotBlock.RECHARGING, recharging);
+//
+//        level.setBlock(worldPosition, newState, 3);
+//    }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
         if (level.isClientSide) return;
 
         int stage = state.getValue(AirPlantPotBlock.STAGE);
+        boolean recharging = state.getValue(AirPlantPotBlock.RECHARGING);
+
+        // growth logic
         if (stage > 0 && stage < 3) {
             if (growCooldown <= 0) {
-                level.setBlock(pos, state.setValue(AirPlantPotBlock.STAGE, stage + 1), 3);
+                stage++;
+                BlockState newState = state.setValue(AirPlantPotBlock.STAGE, stage);
+
+                if (stage >= 3) {
+                    newState = newState.setValue(AirPlantPotBlock.HARVESTS, 3);
+                }
+
+                level.setBlock(pos, newState, 3);
                 growCooldown = 20 * 10; // 10 seconds
             } else growCooldown--;
+        }
+
+        // recharge logic
+        if (recharging) {
+            if (rechargeTicks <= 0) {
+                BlockState newState = state
+                        .setValue(AirPlantPotBlock.HARVESTS, 3)
+                        .setValue(AirPlantPotBlock.RECHARGING, false);
+                level.setBlock(pos, newState, 3);
+            } else rechargeTicks--;
         }
     }
 }

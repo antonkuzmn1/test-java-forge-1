@@ -2,6 +2,7 @@ package com.antonkuzmn1.airplant.registry;
 
 import com.antonkuzmn1.airplant.AirPlantMod;
 import com.antonkuzmn1.airplant.blocks.AirPlantPotBlock;
+import com.antonkuzmn1.airplant.blocks.TestBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,5 +17,10 @@ public class ModBlocks {
     public static final RegistryObject<Block> AIR_PLANT_POT = BLOCKS.register(
             "air_plant_pot",
             AirPlantPotBlock::new
+    );
+
+    public static final RegistryObject<Block> TEST = BLOCKS.register(
+            "test",
+            TestBlock::new
     );
 }

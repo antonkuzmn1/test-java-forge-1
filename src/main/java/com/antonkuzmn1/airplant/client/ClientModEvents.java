@@ -2,6 +2,7 @@ package com.antonkuzmn1.airplant.client;
 
 import com.antonkuzmn1.airplant.AirPlantMod;
 import com.antonkuzmn1.airplant.client.renderer.AirPlantPotBlockRenderer;
+import com.antonkuzmn1.airplant.client.renderer.TestBlockRenderer;
 import com.antonkuzmn1.airplant.registry.ModBlockEntities;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -15,6 +16,10 @@ public class ClientModEvents {
         event.registerBlockEntityRenderer(
                 ModBlockEntities.AIR_PLANT_POT.get(),
                 ctx -> new AirPlantPotBlockRenderer()
+        );
+        event.registerBlockEntityRenderer(
+                ModBlockEntities.TEST.get(),
+                ctx -> new TestBlockRenderer()
         );
     }
 }

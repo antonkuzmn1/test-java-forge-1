@@ -3,6 +3,7 @@ package com.antonkuzmn1.airplant.registry;
 import com.antonkuzmn1.airplant.AirPlantMod;
 import com.antonkuzmn1.airplant.items.AirPlantPotItem;
 import com.antonkuzmn1.airplant.items.AirPlantSeedsItem;
+import com.antonkuzmn1.airplant.items.TestItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -22,5 +23,10 @@ public class ModItems {
     public static final RegistryObject<AirPlantPotItem> AIR_PLANT_POT = ITEMS.register(
             "air_plant_pot",
             AirPlantPotItem::new
+    );
+
+    public static final RegistryObject<TestItem> TEST = ITEMS.register(
+            "test",
+            TestItem::new
     );
 }

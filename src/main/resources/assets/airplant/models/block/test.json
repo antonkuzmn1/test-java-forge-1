@@ -1,0 +1,6 @@
+{
+  "parent": "airplant:block/test",
+  "textures": {
+    "particle": "minecraft:block/flower_pot"
+  }
+}
